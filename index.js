@@ -47,14 +47,14 @@ try {
     },
   ];
 
-  let aggregation = new Aggregate(dataPipeline);
-  console.log(aggregation.getAggregation())
+  // let aggregation = new Aggregate(dataPipeline);
+  // console.log(aggregation.getAggregation())
 
   //for runnign case
-//   for(let i=0; i<dataPipeline.length; i++){
-//     let aggregationRunning = new AggregateRunning(dataPipeline[i])
-//     console.log(aggregationRunning.getAggregation())
-//   }
+  for(let i=0; i<dataPipeline.length; i++){
+    let aggregationRunning = new AggregateRunning(dataPipeline[i])
+    console.log(aggregationRunning.getAggregation())
+  }
   
 } catch (err) {
   console.log(err);
