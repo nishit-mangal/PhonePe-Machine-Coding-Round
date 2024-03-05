@@ -1,0 +1,13 @@
+{
+  "name": "phonepe",
+  "version": "1.0.0",
+  "description": "PhonePe Machine Coding Round",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Nishit Mangal",
+  "license": "ISC",
+  "type":"module"
+}
