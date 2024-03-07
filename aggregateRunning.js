@@ -1,12 +1,8 @@
 import { AggregationKeywords, AggregationsMetadata } from "./constants.js";
 
-// let aggragationResults = {
-//   installCountUser: new Map(),
-//   totalSpaceUsed: new Map(),
-// };
 let userAggregationData = new Map();
+
 export class AggregateRunning {
-  // currentTimestamp = 1706453111464;
   currEvent;
 
   constructor(event) {
@@ -39,9 +35,13 @@ export class AggregateRunning {
       currentTimestamp,
       existingTimestamp
     );
+    this.#performTotalSpaceUsedAggregation(currentTimestamp, existingTimestamp);
   }
 
   #performInstallCountUserAggregation(currentTimestamp, existingTimestamp) {
+    let tempUserObject = userAggregationData.get(
+      this.currEvent.eventData.userId
+    );
     if (
       currentTimestamp - existingTimestamp <
       AggregationsMetadata.INSTALL_COUNT_USER.timeInterval
@@ -50,57 +50,51 @@ export class AggregateRunning {
         this.currEvent.eventData.spaceInMb >
         AggregationsMetadata.INSTALL_COUNT_USER.filterRules[0].value
       ) {
-        
-        let tempUserObject = userAggregationData.get(
-          this.currEvent.eventData.userId
-        );
-
-        console.log("Already exixsting User Data: ", tempUserObject);
+        // console.log("Already exixsting User Data: ", tempUserObject);
 
         if (!tempUserObject[`${AggregationKeywords.INSTALL_COUNT_USER}`]) {
           tempUserObject[`${AggregationKeywords.INSTALL_COUNT_USER}`] = 1;
         } else {
           tempUserObject[`${AggregationKeywords.INSTALL_COUNT_USER}`] += 1;
         }
-        console.log(tempUserObject);
-
-        userAggregationData.set(
-          this.currEvent.eventData.userId,
-          tempUserObject
-        );
+        // console.log(tempUserObject);
       }
     } else {
-      aggragationResults.installCountUser = new Map();
+      tempUserObject[`${AggregationKeywords.INSTALL_COUNT_USER}`] = 0;
     }
+    userAggregationData.set(this.currEvent.eventData.userId, tempUserObject);
   }
-  #performTotalSpaceUsedAggregation() {
+
+  #performTotalSpaceUsedAggregation(currentTimestamp, existingTimestamp) {
+    let tempUserObject = userAggregationData.get(
+      this.currEvent.eventData.userId
+    );
     if (
-      this.currentTimestamp - parseInt(this.currEvent.timestamp) <
+      currentTimestamp - existingTimestamp <
       AggregationsMetadata.TOTAL_SPACE_USED.timeInterval
     ) {
-      aggragationResults.totalSpaceUsed.set(
-        this.currEvent.eventData.userId,
-        (aggragationResults.totalSpaceUsed.get(
-          this.currEvent.eventData.userId
-        ) || 0) + this.currEvent.eventData.spaceInMb
-      );
+      // console.log("Already exixsting User Data: ", tempUserObject);
+      if (!tempUserObject[`${AggregationKeywords.TOTAL_SPACE_USED}`]) {
+        tempUserObject[`${AggregationKeywords.TOTAL_SPACE_USED}`] = this.currEvent.eventData.spaceInMb;
+      } else {
+        tempUserObject[`${AggregationKeywords.TOTAL_SPACE_USED}`] += this.currEvent.eventData.spaceInMb;
+      }
     } else {
-      aggragationResults.totalSpaceUsed = new Map();
+      tempUserObject[`${AggregationKeywords.TOTAL_SPACE_USED}`] = 0;
     }
+    userAggregationData.set(this.currEvent.eventData.userId, tempUserObject);
   }
-  getAggregation(aggregaionKey, userId) {
-    if(!aggregaionKey || !userId){
-      throw `Invalid Input to fetch Aggregation`
+  static getAggregation(aggregaionKey, userId) {
+    if (!aggregaionKey || !userId) {
+      throw `Invalid Input to fetch Aggregation`;
     }
     if (!userAggregationData.has(userId)) {
-     throw `User not found for the ${userId}`;
+      throw `User not found for the ${userId}`;
     }
     let aggregationData = userAggregationData.get(userId);
     if (!aggregationData || !aggregationData[`${aggregaionKey}`]) {
       throw `No relevant aggregation data found for the uaer with id ${userId}`;
     }
-    // this.#performInstallCountUserAggregation();
-    // this.#performTotalSpaceUsedAggregation();
     return aggregationData[`${aggregaionKey}`];
   }
 }

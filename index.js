@@ -1,4 +1,3 @@
-import { Aggregate } from "./aggregate.js";
 import { AggregateRunning } from "./aggregateRunning.js";
 import { AggregationKeywords, EventType } from "./constants.js";
 
@@ -47,17 +46,26 @@ try {
     },
   ];
 
-  // let aggregation = new Aggregate(dataPipeline);
-  // console.log(aggregation.getAggregation())
-
-  //for runnign case
+  //simulation for runnign case
   for (let i = 0; i < dataPipeline.length; i++) {
+    new AggregateRunning(dataPipeline[i]);
     try {
-      let aggregationRunning = new AggregateRunning(dataPipeline[i]);
       console.log(
-        aggregationRunning.getAggregation(
+        "Install Count User Data for User 2",
+        AggregateRunning.getAggregation(
           AggregationKeywords.INSTALL_COUNT_USER,
           "u002"
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+    try {
+      console.log(
+        "Total Space Used Data for User 1",
+        AggregateRunning.getAggregation(
+          AggregationKeywords.TOTAL_SPACE_USED,
+          "u001"
         )
       );
     } catch (err) {
