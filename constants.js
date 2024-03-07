@@ -36,5 +36,6 @@ export const AggregationsMetadata = {
     timeInterval: 5 * 60 * 1000,
     filterRules: [],
   },
+
 };
 

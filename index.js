@@ -1,9 +1,9 @@
 import { Aggregate } from "./aggregate.js";
 import { AggregateRunning } from "./aggregateRunning.js";
-import { EventType } from "./constants.js";
+import { AggregationKeywords, EventType } from "./constants.js";
 
 try {
-    //Assumption: timestamp is continuously increasing
+  //Assumption: timestamp is continuously increasing
   const dataPipeline = [
     {
       eventType: EventType.APP_INSTALL_COMPLETED,
@@ -51,11 +51,19 @@ try {
   // console.log(aggregation.getAggregation())
 
   //for runnign case
-  for(let i=0; i<dataPipeline.length; i++){
-    let aggregationRunning = new AggregateRunning(dataPipeline[i])
-    console.log(aggregationRunning.getAggregation())
+  for (let i = 0; i < dataPipeline.length; i++) {
+    try {
+      let aggregationRunning = new AggregateRunning(dataPipeline[i]);
+      console.log(
+        aggregationRunning.getAggregation(
+          AggregationKeywords.INSTALL_COUNT_USER,
+          "u002"
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
   }
-  
 } catch (err) {
   console.log(err);
 }
